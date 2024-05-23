@@ -4,7 +4,6 @@ local DisplayInfo = require(game.ReplicatedStorage.Types.DisplayInfo)
 export type StatValue = {
     Id : number,
     Multiplier : number,
-    DisplayInfoId : number,
 } & DisplayInfo.DisplayInfo
 
 return 0

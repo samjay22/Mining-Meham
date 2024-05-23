@@ -16,14 +16,18 @@ UPGRADE #3
 	- Special Breakables: Chest [75%], Buried Treasure [25%]
 
 ]]
-local Entity = require(game.ReplicatedStorage.Types.Entity)
 local DisplayInfo = require(game.ReplicatedStorage.Types.DisplayInfo)
 export type BreakableItem = {
     DropInfoId :  number,
     BreakRewardId : number,
+    BreakableTypeId : number,
     RarityId : number,
     BaseSpawnChance : number,
-}
+    MaxHealth : number,
+
+    --Path so we can clone
+    ItemPath : string,
+} & DisplayInfo.DisplayInfo
 
 export type BreakReward = {
     Id : number,

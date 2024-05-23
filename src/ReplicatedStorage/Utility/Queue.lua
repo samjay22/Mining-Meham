@@ -2,8 +2,9 @@
 local Queue = {}
 Queue.__index = Queue
 
-function Queue.new(queueTable)
-    return setmetatable(queueTable or {}, Queue)
+export type QueueType = typeof(Queue)
+function Queue.new(queueTable : {any}?) : QueueType 
+    return setmetatable(queueTable or {}, Queue) :: any
 end
 
 function Queue:Dequeue()

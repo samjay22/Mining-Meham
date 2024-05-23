@@ -4,7 +4,9 @@ local HttpService : HttpService = game:GetService("HttpService")
 local Queue = require(game.ReplicatedStorage.Utility.Queue)
 local Entity = require(game.ReplicatedStorage.Types.Entity)
 
-local _entites : Entity.BaseEntity = {}
+type BaseEntity<T> = Entity.BaseEntity & T
+
+local _entites : {BaseEntity<Entity.PlayerCharacterEntity | Entity.BreakableEntity | any>}  = {}
 local functions = {}
 
 --returns entity id
@@ -18,14 +20,16 @@ local functions = {}
 function functions.AddNewEntity<T>(entityData : T, canTakeDamage : boolean, 
     onInteractionTriggered, onUpdate, onEntityDestroyed) : string
     local entityId : string = HttpService:GenerateGUID()
-    local baseEntity : Entity.BaseEntity & T = setmetatable{entityData, {
-        Id = entityId;
+
+    --this isn't complex at all
+    local baseEntity : BaseEntity<T> = (setmetatable(entityData :: any, {__index = {
+        Id = entityId,
         CanTakeDamage = canTakeDamage,
-        OnUpdate = onUpdate,
-        OnEntityDestroyed = onEntityDestroyed,
+        InteractionQueue = Queue.new(),
         OnInteractionTriggered = onInteractionTriggered,
-        interactionInteractionQueue = Queue.new()
-    }}
+        OnUpdate = onUpdate,
+        OnEntityDestroyed = onEntityDestroyed
+    }})) :: T & BaseEntity<T>
 
     table.insert(_entites, baseEntity)
 
@@ -33,7 +37,7 @@ function functions.AddNewEntity<T>(entityData : T, canTakeDamage : boolean,
 end
 
 function functions.RemoveEntityById(entityId : string)
-    for _, v : Entity.BaseEntity in _entites do
+    for _, v : BaseEntity<any> in next, _entites do
         if v.Id == entityId then
             table.remove(_entites, _)
             break
@@ -41,12 +45,16 @@ function functions.RemoveEntityById(entityId : string)
     end
 end
 
-function functions.GetEntityById<T>(entityId : string) : T
-    for i, v : Entity.BaseEntity in _entites do
+function functions.GetEntityById<T>(entityId : string) : BaseEntity<T>?
+
+    --We know that T intersects base entity as T is a subtype of BaseEntity
+    for _, v : BaseEntity<T> in next,_entites :: {BaseEntity<T>} do
         if v.Id == entityId then
-            return v :: T
+            return v :: BaseEntity<T>
         end
     end
+
+    return nil
 end
 
 return functions

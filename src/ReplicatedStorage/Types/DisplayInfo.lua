@@ -1,6 +1,6 @@
 --!strict
 export type DisplayInfo = {
-    Id : number,
+    Id : number | string,
     DisplayName : string,
     SystemName : string,
 

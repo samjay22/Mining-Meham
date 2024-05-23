@@ -8,7 +8,7 @@ Not to mention, it is easier to reference stats by ID rather than by name. Numbe
 local Stats = require(game.ReplicatedStorage.Types.Stats)
 type StatValue = Stats.StatValue
 
-local _statList =  {} :: StatValue
+local _statList : {Stats.StatValue} = {}
 local Stats = {}
 
 function Stats.NewStat(id : number, systemName : string, displayName : string, multiplier : number, statColor : Color3?)
@@ -29,17 +29,17 @@ function Stats.GetStatFromId(id : number) : StatValue
     return _statList[id] :: StatValue
 end
 
-function Stats.GetStatFromName(name : string) : StatValue
+function Stats.GetStatFromName(name : string) : StatValue?
     local statValue : StatValue? = nil
-    for _, stat in ipairs(_statList) do
-        if stat.Name == name then
+    for _, stat : StatValue in ipairs(_statList) do
+        if stat.SystemName == name then
             statValue = stat
             break
         end
     end
 
     if not statValue then
-        return warn("Stat with name " .. name .. " does not exist!")
+        warn("Stat with name " .. name .. " does not exist!")
     end
 
     return statValue
